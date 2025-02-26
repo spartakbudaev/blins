@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Блинная башня</title>
+    <link rel="stylesheet" href="css/style.css">
+    <!-- Добавляем favicon -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🥞</text></svg>">
+    <!-- Подключаем Telegram Mini App API -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+<body>
+    <div class="game-container">
+        <div class="score-container">
+            <div id="score-circle">
+                <span id="score-label">Счет</span>
+                <span id="score-value">0</span>
+            </div>
+        </div>
+        
+        <canvas id="game-canvas" width="320" height="480"></canvas>
+        
+        <div class="controls">
+            <button id="play-button" class="tg-button">Играть</button>
+            <button id="restart-button" class="tg-button" style="display: none;">Новая игра</button>
+        </div>
+    </div>
+    
+    <!-- Подключаем скрипты игры -->
+    <script src="js/pancake.js"></script>
+    <script src="js/game.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html> 
