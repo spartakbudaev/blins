@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Отладка Блинной башни</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .game-container {
+            max-width: 400px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .score-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        #score-circle {
+            display: inline-block;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background-color: #FFB432;
+            color: white;
+            text-align: center;
+            line-height: 1.2;
+            padding-top: 20px;
+            box-sizing: border-box;
+        }
+        #score-label {
+            display: block;
+            font-size: 14px;
+        }
+        #score-value {
+            display: block;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        canvas {
+            display: block;
+            width: 400px;
+            height: 600px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .controls {
+            display: flex;
+            justify-content: center;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #FFB432;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 0 10px;
+        }
+        button:hover {
+            background-color: #FFA032;
+        }
+        #debug-panel {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f0f0f0;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .debug-controls {
+            margin-top: 10px;
+            display: flex;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1>Отладка Блинной башни</h1>
+        
+        <div class="score-container">
+            <div id="score-circle">
+                <span id="score-label">Счет</span>
+                <span id="score-value">0</span>
+            </div>
+        </div>
+        
+        <canvas id="game-canvas" width="400" height="600"></canvas>
+        
+        <div class="controls">
+            <button id="play-button">Играть</button>
+            <button id="restart-button" style="display: none;">Новая игра</button>
+        </div>
+        
+        <div class="debug-controls">
+            <button id="force-update">Принудительное обновление</button>
+            <button id="toggle-animation">Пауза/Продолжить</button>
+        </div>
+        
+        <div id="debug-panel">
+            <h3>Отладочная информация:</h3>
+            <div id="debug-log"></div>
+        </div>
+    </div>
+    
+    <script>
+        // Переопределяем console.log для вывода в отладочную панель
+        const originalConsoleLog = console.log;
+        console.log = function() {
+            const args = Array.from(arguments);
+            const message = args.map(arg => 
+                typeof arg === 'object' ? JSON.stringify(arg) : arg
+            ).join(' ');
+            
+            const debugLog = document.getElementById('debug-log');
+            const logEntry = document.createElement('div');
+            logEntry.textContent = `${new Date().toLocaleTimeString()}: ${message}`;
+            debugLog.appendChild(logEntry);
+            debugLog.scrollTop = debugLog.scrollHeight;
+            
+            originalConsoleLog.apply(console, arguments);
+        };
+    </script>
+    
+    <!-- Подключаем скрипты игры -->
+    <script src="js/pancake.js"></script>
+    <script src="js/game.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log("Отладочная страница загружена");
+            
+            // Получаем элементы DOM
+            const canvas = document.getElementById('game-canvas');
+            const playButton = document.getElementById('play-button');
+            const restartButton = document.getElementById('restart-button');
+            const forceUpdateButton = document.getElementById('force-update');
+            const toggleAnimationButton = document.getElementById('toggle-animation');
+            
+            console.log("Элементы DOM получены:", {
+                canvas: canvas ? "найден" : "не найден",
+                playButton: playButton ? "найден" : "не найден",
+                restartButton: restartButton ? "найден" : "не найден"
+            });
+            
+            // Создаем игру
+            console.log("Создание игры...");
+            const game = new PancakeTowerGame(canvas);
+            console.log("Игра создана");
+            
+            // Явно запускаем игровой цикл
+            console.log("Явный запуск игрового цикла");
+            game.startGameLoop();
+            
+            // Обработчик нажатия на кнопку "Играть"
+            playButton.addEventListener('click', () => {
+                console.log("Нажата кнопка 'Играть'");
+                const gameOver = game.dropPancake();
+                
+                // Если игра окончена, показываем кнопку "Новая игра"
+                if (gameOver) {
+                    console.log("Игра окончена");
+                    playButton.style.display = 'none';
+                    restartButton.style.display = 'block';
+                }
+            });
+            
+            // Обработчик нажатия на кнопку "Новая игра"
+            restartButton.addEventListener('click', () => {
+                console.log("Нажата кнопка 'Новая игра'");
+                game.restart();
+                restartButton.style.display = 'none';
+                playButton.style.display = 'block';
+            });
+            
+            // Обработчик нажатия на кнопку "Принудительное обновление"
+            forceUpdateButton.addEventListener('click', () => {
+                console.log("Принудительное обновление");
+                if (game.currentPancake) {
+                    game.currentPancake.isMoving = true;
+                    game.update(16);
+                    game.draw();
+                }
+            });
+            
+            // Обработчик нажатия на кнопку "Пауза/Продолжить"
+            let isPaused = false;
+            toggleAnimationButton.addEventListener('click', () => {
+                isPaused = !isPaused;
+                console.log(isPaused ? "Анимация приостановлена" : "Анимация возобновлена");
+                
+                if (isPaused) {
+                    game.stopGameLoop();
+                } else {
+                    game.startGameLoop();
+                }
+            });
+            
+            // Добавляем информацию о размерах canvas
+            console.log("Размеры canvas:", {
+                width: canvas.width,
+                height: canvas.height,
+                clientWidth: canvas.clientWidth,
+                clientHeight: canvas.clientHeight
+            });
+        });
+    </script>
+</body>
+</html> 

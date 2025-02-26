@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Блинная башня</title>
+    <link rel="stylesheet" href="css/style.css">
+    <!-- Добавляем favicon -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🥞</text></svg>">
+    <!-- Подключаем Telegram Mini App API -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        /* Дополнительные стили для обеспечения корректного отображения */
+        canvas {
+            display: block;
+            width: 100%;
+            height: 90vh;
+            max-height: 90vh;
+            touch-action: manipulation;
+        }
+        
+        /* Убедимся, что контейнер имеет достаточную высоту */
+        .game-container {
+            min-height: 100vh;
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        /* Стили для полноэкранного режима */
+        body.fullscreen {
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            margin: 0;
+            padding: 0;
+        }
+        
+        /* Инструкция для игрока */
+        .game-instruction {
+            position: absolute;
+            bottom: 20px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-size: 14px;
+            color: #666;
+            opacity: 0.8;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body class="fullscreen">
+    <div class="game-container">
+        <div class="score-container">
+            <div id="score-circle">
+                <span id="score-label">Счет</span>
+                <span id="score-value">0</span>
+            </div>
+        </div>
+        
+        <canvas id="game-canvas" width="400" height="600"></canvas>
+        
+        <div class="controls">
+            <button id="play-button" class="tg-button">Играть</button>
+            <button id="restart-button" class="tg-button" style="display: none;">Новая игра</button>
+        </div>
+        
+        <div class="game-instruction" id="game-instruction">
+            Нажмите на экран, чтобы опустить блин
+        </div>
+    </div>
+    
+    <!-- Подключаем скрипты игры -->
+    <script src="js/pancake.js"></script>
+    <script src="js/game.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html> 
